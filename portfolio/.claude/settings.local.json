@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npm install:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm remove:*)",
+      "Bash(pnpm dlx:*)",
+      "WebFetch(domain:statusbadges.me)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
