@@ -10,7 +10,10 @@
       "Bash(grep:*)",
       "Bash(head:*)",
       "Bash(cd D:/personal/apps/web && npm run typecheck 2>&1)",
-      "Bash(true:*)"
+      "Bash(true:*)",
+      "Bash(cd D:/personal && pnpm update next@latest 2>&1)",
+      "Bash(cd D:/personal && pnpm view next@latest version 2>&1)",
+      "Bash(tail:*)"
     ],
     "deny": [],
     "ask": []
