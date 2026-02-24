@@ -3,6 +3,7 @@
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { Github, Gitlab, ExternalLink, MapPin, Briefcase, GraduationCap, Mail, Copy, Check } from 'lucide-react'
 import { Badge } from "@workspace/ui/components/badge"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@workspace/ui/components/tabs"
 import { useTheme } from 'next-themes'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { Header } from '@/components/header'
@@ -10,6 +11,7 @@ import { LoadingScreen } from '@/components/loading-screen'
 import { EasterEgg } from '@/components/easter-egg'
 import { CharReveal } from '@/components/text-reveal'
 import { useSound } from '@/hooks/use-sound'
+import { KeyboardsPage } from '@/components/keyboards-page'
 import { toast } from 'sonner'
 
 const staggerContainer = {
@@ -195,14 +197,37 @@ export default function Page() {
           style={{ scaleX }}
         />
 
-        <Header
-          mounted={mounted}
-          soundEnabled={soundEnabled}
-          onSoundToggle={handleSoundToggle}
-          onThemeToggle={handleThemeToggle}
-        />
-
-        {/* Hero Section */}
+        {/* Tabs Navigation and Content */}
+        <Tabs defaultValue="home" className="w-full">
+          <motion.div
+            className="mb-12 -mx-6 px-6 border-b border-border"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <TabsList className="bg-transparent border-b-0 w-full justify-start h-auto p-0 rounded-none">
+              <TabsTrigger
+                value="home"
+                className="bg-transparent border-b-2 border-transparent text-muted-foreground hover:text-foreground data-[state=active]:text-foreground data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none px-0 py-3 mr-8 font-serif text-lg font-light italic transition-colors"
+              >
+                Home
+              </TabsTrigger>
+              <TabsTrigger
+                value="keyboards"
+                className="bg-transparent border-b-2 border-transparent text-muted-foreground hover:text-foreground data-[state=active]:text-foreground data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none px-0 py-3 mr-8 font-serif text-lg font-light italic transition-colors"
+              >
+                Keyboards
+              </TabsTrigger>
+            </TabsList>
+          </motion.div>
+          <TabsContent value="home" className="space-y-12">
+            <Header
+              mounted={mounted}
+              soundEnabled={soundEnabled}
+              onSoundToggle={handleSoundToggle}
+              onThemeToggle={handleThemeToggle}
+            />
+              {/* Hero Section */}
         <motion.section
           className="mb-32 pt-8"
           initial="initial"
@@ -637,23 +662,35 @@ export default function Page() {
           </motion.div>
         </motion.section>
 
-        {/* Footer */}
-        <motion.footer
-          className="pt-12 border-t border-border"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground">
-              Marques Scripps © {new Date().getFullYear()}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Built with Next.js, TailwindCSS & Motion
-            </p>
-          </div>
-        </motion.footer>
+              {/* Footer */}
+              <motion.footer
+                className="pt-12 border-t border-border"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                  <p className="text-sm text-muted-foreground">
+                    Marques Scripps © {new Date().getFullYear()}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Built with Next.js, TailwindCSS & Motion
+                  </p>
+                </div>
+              </motion.footer>
+            </TabsContent>
+
+            <TabsContent value="keyboards">
+              <Header
+                mounted={mounted}
+                soundEnabled={soundEnabled}
+                onSoundToggle={handleSoundToggle}
+                onThemeToggle={handleThemeToggle}
+              />
+              <KeyboardsPage />
+            </TabsContent>
+          </Tabs>
       </div>
     </>
   )

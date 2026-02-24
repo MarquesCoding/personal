@@ -6,7 +6,11 @@
       "Bash(pnpm add:*)",
       "Bash(pnpm remove:*)",
       "Bash(pnpm dlx:*)",
-      "WebFetch(domain:statusbadges.me)"
+      "WebFetch(domain:statusbadges.me)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(cd D:/personal/apps/web && npm run typecheck 2>&1)",
+      "Bash(true:*)"
     ],
     "deny": [],
     "ask": []
