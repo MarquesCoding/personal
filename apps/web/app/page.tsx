@@ -87,17 +87,17 @@ const projects = [
     technologies: ["React", "Vite", "TailwindCSS", "Vercel", "AWS", "Gitlab"]
   },
   {
-    title: "PowerHut",
-    description: "A Gaming Server Hosting Company",
+    title: "StellarStack",
+    description: "Open-source game server management panel",
     tech: "React",
-    link: "https://github.com/MarquesCoding/PowerHut-Landing",
+    link: "https://github.com/StellarStackOSS/StellarStack",
     icon: Github,
     points: [
-      "Created a small gaming server hosting company landing page",
-      "Setup an interactive hardware monitoring page that included stats about the servers using Grafana",
-      "Created instances, installed and setup Ubuntu (Linux) VPS & Dedicated Servers for pipelines & deployments"
+      "Contributed to a modern, open-source game server hosting panel with multi-server management capabilities",
+      "Participated in building real-time features using WebSocket-powered console, statistics, and notifications",
+      "Worked with a comprehensive REST API and granular permission system with 45+ permission nodes"
     ],
-    technologies: ["AWS", "React", "Vite", "Docker", "Grafana", "GitHub", "Vercel", "TailwindCSS"]
+    technologies: ["Next.js", "TypeScript", "PostgreSQL", "Rust", "Docker", "TailwindCSS", "WebSockets", "Turborepo"]
   }
 ]
 
