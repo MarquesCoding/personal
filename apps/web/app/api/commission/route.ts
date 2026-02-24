@@ -26,6 +26,7 @@ const commissionSchema = z.object({
 
 function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for')
+  // @ts-ignore
   const ip = forwarded ? forwarded.split(',')[0].trim() : request.ip || 'unknown'
   return ip
 }
