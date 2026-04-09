@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
-import { Github, Gitlab, ExternalLink, MapPin, Briefcase, GraduationCap, Mail, Copy, Check } from 'lucide-react'
+import { Github, Gitlab, ExternalLink, MapPin, Briefcase, GraduationCap, Mail, Copy, Check, Calendar } from 'lucide-react'
 import { Badge } from "@workspace/ui/components/badge"
 import { useTheme } from 'next-themes'
 import { useEffect, useState, useRef, useCallback } from 'react'
@@ -348,6 +348,17 @@ export default function Page() {
               <span className="text-sm">{EMAIL}</span>
               <Copy className="w-4 h-4 text-muted-foreground" />
             </motion.button>
+            <motion.a
+              href="https://www.cal.eu/marquescoding/15min"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-3 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Calendar className="w-5 h-5" />
+              <span className="text-sm">Schedule a meeting</span>
+            </motion.a>
           </motion.div>
         </motion.section>
 
