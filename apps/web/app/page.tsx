@@ -3,7 +3,6 @@
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { Github, Gitlab, ExternalLink, MapPin, Briefcase, GraduationCap, Mail, Copy, Check } from 'lucide-react'
 import { Badge } from "@workspace/ui/components/badge"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@workspace/ui/components/tabs"
 import { useTheme } from 'next-themes'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { Header } from '@/components/header'
@@ -11,7 +10,6 @@ import { LoadingScreen } from '@/components/loading-screen'
 import { EasterEgg } from '@/components/easter-egg'
 import { CharReveal } from '@/components/text-reveal'
 import { useSound } from '@/hooks/use-sound'
-import { KeyboardsPage } from '@/components/keyboards-page'
 import { toast } from 'sonner'
 
 const staggerContainer = {
@@ -31,8 +29,8 @@ const fadeInUp = {
 const experience = [
   {
     title: "Software Engineer E2",
-    company: "Ocado Technology",
-    type: "Hybrid",
+    company: "Freelance",
+    type: "Remote",
     period: "Oct 2023 - Present",
     points: [
       "Improved frontend accessibility using knowledge from training, such as making it responsive",
@@ -45,8 +43,8 @@ const experience = [
   },
   {
     title: "Software Engineer E1",
-    company: "Ocado Technology",
-    type: "Hybrid",
+    company: "Freelance",
+    type: "Remote",
     period: "Aug 2022 - Oct 2023",
     points: [
       "Streamlined processes for faster and more efficient project migrations",
@@ -197,30 +195,6 @@ export default function Page() {
           style={{ scaleX }}
         />
 
-        {/* Tabs Navigation and Content */}
-        <Tabs defaultValue="home" className="w-full">
-          <motion.div
-            className="mb-12 -mx-6 px-6 border-b border-border"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <TabsList className="bg-transparent border-b-0 w-full justify-start h-auto p-0 rounded-none">
-              <TabsTrigger
-                value="home"
-                className="bg-transparent border-b-2 border-transparent text-muted-foreground hover:text-foreground data-[state=active]:text-foreground data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none px-0 py-3 mr-8 font-serif text-lg font-light italic transition-colors"
-              >
-                Home
-              </TabsTrigger>
-              <TabsTrigger
-                value="keyboards"
-                className="bg-transparent border-b-2 border-transparent text-muted-foreground hover:text-foreground data-[state=active]:text-foreground data-[state=active]:border-foreground data-[state=active]:bg-transparent rounded-none px-0 py-3 mr-8 font-serif text-lg font-light italic transition-colors"
-              >
-                Keyboards
-              </TabsTrigger>
-            </TabsList>
-          </motion.div>
-          <TabsContent value="home" className="space-y-12">
             <Header
               mounted={mounted}
               soundEnabled={soundEnabled}
@@ -258,7 +232,7 @@ export default function Page() {
                   transition={{ delay: 0.5 }}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  Available
+                  Open to Work
                 </motion.span>
               </div>
               <h1 className="font-serif text-5xl md:text-7xl font-light italic tracking-tight">
@@ -275,7 +249,7 @@ export default function Page() {
             <span>United Kingdom</span>
             <span className="mx-2">·</span>
             <Briefcase className="w-4 h-4" />
-            <span>Ocado Technology</span>
+            <span>Freelance</span>
           </motion.div>
 
           {/* Status Badges */}
@@ -329,7 +303,8 @@ export default function Page() {
             variants={fadeInUp}
           >
             Building elegant solutions for complex problems. Passionate about frontend architecture,
-            developer experience, and creating seamless user interfaces.
+            developer experience, and creating seamless user interfaces. Currently working on{' '}
+            <a href="https://StellarStack.dev" target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-4 hover:opacity-80 transition-opacity">StellarStack</a>.
           </motion.p>
 
           {/* Email */}
@@ -679,18 +654,6 @@ export default function Page() {
                   </p>
                 </div>
               </motion.footer>
-            </TabsContent>
-
-            <TabsContent value="keyboards">
-              <Header
-                mounted={mounted}
-                soundEnabled={soundEnabled}
-                onSoundToggle={handleSoundToggle}
-                onThemeToggle={handleThemeToggle}
-              />
-              <KeyboardsPage />
-            </TabsContent>
-          </Tabs>
       </div>
     </>
   )

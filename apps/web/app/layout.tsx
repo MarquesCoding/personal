@@ -18,8 +18,8 @@ const fontMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Marques Scripps | Software Engineer",
-  description: "Software Engineer at Ocado Technology. Building elegant solutions for complex problems. Passionate about frontend architecture, developer experience, and creating seamless user interfaces.",
-  keywords: ["Software Engineer", "Frontend Developer", "React", "TypeScript", "Ocado", "Web Development"],
+  description: "Freelance Software Engineer. Building elegant solutions for complex problems. Passionate about frontend architecture, developer experience, and creating seamless user interfaces.",
+  keywords: ["Software Engineer", "Frontend Developer", "React", "TypeScript", "Freelance", "Web Development"],
   authors: [{ name: "Marques Scripps" }],
   creator: "Marques Scripps",
   openGraph: {
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     url: "https://mscripps.uk",
     title: "Marques Scripps | Software Engineer",
-    description: "Software Engineer at Ocado Technology. Building elegant solutions for complex problems.",
+    description: "Freelance Software Engineer. Building elegant solutions for complex problems.",
     siteName: "Marques Scripps",
     images: [
       {
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Marques Scripps | Software Engineer",
-    description: "Software Engineer at Ocado Technology. Building elegant solutions for complex problems.",
+    description: "Freelance Software Engineer. Building elegant solutions for complex problems.",
     images: ["/og-image.png"],
   },
   robots: {
