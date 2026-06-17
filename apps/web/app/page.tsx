@@ -1,670 +1,452 @@
 'use client'
 
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
-import { Github, Gitlab, ExternalLink, MapPin, Briefcase, GraduationCap, Mail, Copy, Check, Calendar } from 'lucide-react'
-import { Badge } from "@workspace/ui/components/badge"
-import { useTheme } from 'next-themes'
-import { useEffect, useState, useRef, useCallback } from 'react'
-import { Header } from '@/components/header'
-import { LoadingScreen } from '@/components/loading-screen'
-import { EasterEgg } from '@/components/easter-egg'
-import { CharReveal } from '@/components/text-reveal'
-import { useSound } from '@/hooks/use-sound'
+import { motion, useScroll, useSpring } from 'framer-motion'
+import {
+  Github, Linkedin, Globe, ExternalLink, MapPin, GraduationCap, Mail, Copy, Check,
+  ArrowUpRight, Download, Calendar, ChevronRight, ChevronDown,
+} from 'lucide-react'
+import { Badge } from '@workspace/ui/components/badge'
+import { cn } from '@workspace/ui/lib/utils'
+import { useState, useCallback } from 'react'
 import { toast } from 'sonner'
+import { EasterEgg } from '@/components/easter-egg'
+import { TactileButton } from '@/components/tactile-button'
+import { TopNav } from '@/components/top-nav'
+import { RoleRotator } from '@/components/role-rotator'
+import { Stickers } from '@/components/stickers'
+import { StatusBadges } from '@/components/status-badges'
 
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
+const fadeUp = {
+  initial: { opacity: 0, y: 22 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-80px' },
+  transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
 }
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+const staggerParent = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05, delayChildren: 0.04 } },
+}
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const } },
 }
 
 const experience = [
   {
-    title: "Software Engineer E2",
-    company: "Freelance",
-    type: "Remote",
-    period: "Oct 2023 - Present",
+    title: 'Full Stack Software Engineer (E2)',
+    company: 'Ocado Technology',
+    type: 'Hybrid',
+    period: 'Oct 2023 — Present',
     points: [
-      "Improved frontend accessibility using knowledge from training, such as making it responsive",
-      "Worked actively with a team of 48 members, producing an in-house application for our robotic warehouse operatives",
-      "Responsible for introduction to end-to-end testing in our environment using custom Docker containers during our pipeline processes",
-      "Contribute to the full-stack development of a web application intended for the retail industry",
-      "Discovered and shared JavaScript frontend standards across the team and other teams at Ocado"
+      'Contribute to full-stack development of a customer-facing web application for the retail industry, working within a team of 48.',
+      'Improved front-end accessibility through training-led practices, including responsive layouts and RTL support.',
+      'Introduced end-to-end testing to the team’s pipeline using custom Docker containers.',
+      'Defined and shared JavaScript front-end standards adopted across multiple teams at Ocado.',
     ],
-    technologies: ["AWS", "Java", "Springboot", "JavaScript", "TypeScript", "Gitlab", "Jest", "Cypress", "Docker"]
+    technologies: ['AWS', 'Java', 'Spring Boot', 'TypeScript', 'GitLab', 'Jest', 'Cypress', 'Docker'],
   },
   {
-    title: "Software Engineer E1",
-    company: "Freelance",
-    type: "Remote",
-    period: "Aug 2022 - Oct 2023",
+    title: 'Full Stack Software Engineer (E1)',
+    company: 'Ocado Technology',
+    type: 'Hybrid',
+    period: 'Aug 2022 — Oct 2023',
     points: [
-      "Streamlined processes for faster and more efficient project migrations",
-      "Setup and maintained a shared UI library that was used to share components between multiple applications across different teams",
-      "Collaborated with cross-functional teams to achieve project goals in a timely manner",
-      "Migrated projects from Webpack to Vite, saving 1m 36s seconds per build",
-      "Developed an interactive grid map with ThreeJS, improving user navigation and data visualisation",
-      "Implemented Cypress into our testing workflows, enhancing testing efficiency and coverage"
+      'Streamlined build and migration processes, cutting build times by 24%.',
+      'Migrated projects from Webpack to Vite, saving ~1m 36s per build on average.',
+      'Built and maintained a shared UI component library reused across multiple teams’ applications.',
+      'Developed an interactive grid map with ThreeJS, improving user navigation and data visualisation.',
     ],
-    technologies: ["AWS", "Java", "Springboot", "JavaScript", "TypeScript", "Gitlab", "Jest", "Cypress"]
+    technologies: ['AWS', 'Java', 'Spring Boot', 'TypeScript', 'GitLab', 'Jest', 'Cypress'],
   },
   {
-    title: "Full-Stack Software Engineer",
-    company: "RCRaceControl",
-    type: "Self Employed",
-    period: "Aug 2018 - Present",
+    title: 'Full Stack Software Engineer',
+    company: 'RCRaceControl',
+    type: 'Self-Employed',
+    period: 'Aug 2018 — Present',
     points: [
-      "Migrated legacy PHP application over to modern technologies such as React, NextJS & Postgres",
-      "Created a custom UI component library dedicated for this project",
-      "Built an interactive event booking platform using a custom-built API using NestJS",
-      "Regularly interfaced with clients to provide technological solutions and support"
+      'Migrated a legacy PHP application to a modern stack (React, Next.js, Postgres).',
+      'Built an interactive event-booking platform backed by a custom NestJS API.',
+      'Created a bespoke UI component library and supported clients directly.',
     ],
-    technologies: ["AWS", "React", "Vite", "Docker", "NestJS", "Postgres", "Gitlab"]
-  }
+    technologies: ['AWS', 'React', 'Vite', 'Next.js', 'NestJS', 'Postgres', 'Docker'],
+  },
 ]
 
 const projects = [
   {
-    title: "MultiTwitch",
-    description: "An multistream viewer client",
-    tech: "React",
-    link: "https://gitlab.com/MarquesCoding/multitwitch",
-    icon: Gitlab,
+    title: 'PolarHQ',
+    accent: '#3b82f6',
+    description: 'Self-hosted, end-to-end encrypted Photos, Drive & Docs suite',
+    link: 'https://github.com/MarquesCoding/PolarHQ',
+    image: '/polarhq.jpg',
     points: [
-      "Created an interactive multistream viewer client for the streaming platform, Twitch",
-      "This was built in a day as a small project that my friends wanted. It provides an easy to use interface and quick stream API fetching"
+      'A privacy-first alternative to cloud suites where the server only ever stores client-side-encrypted ciphertext (libsodium).',
+      'Spans a photo library, a versioned file drive, and real-time collaborative docs/sheets, with a native SwiftUI iOS app.',
     ],
-    technologies: ["React", "Vite", "TailwindCSS", "Vercel", "AWS", "Gitlab"]
+    technologies: ['TypeScript', 'Next.js', 'Hono', 'tRPC', 'Drizzle', 'PostgreSQL', 'Redis', 'Swift'],
   },
   {
-    title: "StellarStack",
-    description: "Open-source game server management panel",
-    tech: "React",
-    link: "https://github.com/StellarStackOSS/StellarStack",
-    icon: Github,
+    title: 'StellarStack',
+    accent: '#8b5cf6',
+    description: 'Open-source game server management panel',
+    link: 'https://github.com/MarquesCoding/StellarStack',
+    image: '/stellarstack.jpg',
     points: [
-      "Contributed to a modern, open-source game server hosting panel with multi-server management capabilities",
-      "Participated in building real-time features using WebSocket-powered console, statistics, and notifications",
-      "Worked with a comprehensive REST API and granular permission system with 45+ permission nodes"
+      'Self-hostable panel for managing Minecraft, Terraria, Valheim and more across distributed nodes.',
+      'Real-time monitoring, automated backups and granular access control (45+ permission nodes), with a Rust daemon driving Docker.',
     ],
-    technologies: ["Next.js", "TypeScript", "PostgreSQL", "Rust", "Docker", "TailwindCSS", "WebSockets", "Turborepo"]
-  }
+    technologies: ['TypeScript', 'Rust', 'Next.js', 'Hono', 'Prisma', 'PostgreSQL', 'Docker', 'WebSockets'],
+  },
+  {
+    title: 'StellarGit',
+    accent: '#ec4899',
+    description: 'AI-powered desktop Git client (macOS / Windows / Linux)',
+    link: 'https://github.com/MarquesCoding/StellarGit',
+    image: '/stellargit.jpg',
+    points: [
+      'Cross-platform Git client with an interactive commit graph, diffs, blame, stash management and an embedded PTY terminal.',
+      'Integrates GitHub / GitLab pull requests and AI-assisted workflows behind a themeable UI (29 themes).',
+    ],
+    technologies: ['TypeScript', 'Electron', 'React', 'Vite', 'TailwindCSS', 'shadcn/ui', 'Zustand', 'Turborepo'],
+  },
 ]
 
-const skills = {
-  languages: ["Java", "JavaScript", "TypeScript", "Python"],
-  technologies: ["React", "AWS", "NestJS", "ThreeJS", "PostgreSQL", "TailwindCSS", "Docker"]
+const EMAIL = 'hello@mscripps.uk'
+
+function Section({
+  id, index, title, children,
+}: { id: string; index: string; title: string; children: React.ReactNode }) {
+  return (
+    <section id={id} className="mt-28 scroll-mt-28">
+      <motion.div className="mb-8 flex items-center gap-3" {...fadeUp}>
+        <span className="font-mono text-xs text-muted-foreground">{index}</span>
+        <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+        <span className="h-px flex-1 bg-border" />
+      </motion.div>
+      {children}
+    </section>
+  )
 }
 
-const EMAIL = "hello@mscripps.uk"
-
 export default function Page() {
-  const { setTheme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
   const [copied, setCopied] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+
   const { scrollYProgress } = useScroll()
-  const { enabled: soundEnabled, setEnabled: setSoundEnabled, playClick, playSuccess } = useSound()
-
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  })
-
-  // Parallax transforms for sections
-  const heroY = useTransform(scrollYProgress, [0, 0.3], [0, -50])
-  const experienceY = useTransform(scrollYProgress, [0.1, 0.5], [50, -30])
-  const projectsY = useTransform(scrollYProgress, [0.3, 0.7], [50, -30])
-  const skillsY = useTransform(scrollYProgress, [0.5, 0.9], [50, -30])
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const handleThemeToggle = useCallback(async (event: React.MouseEvent<HTMLButtonElement>) => {
-    playClick()
-    const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
-
-    if (!document.startViewTransition) {
-      setTheme(newTheme)
-      return
-    }
-
-    const x = event.clientX
-    const y = event.clientY
-    const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    )
-
-    const transition = document.startViewTransition(() => {
-      setTheme(newTheme)
-    })
-
-    await transition.ready
-
-    document.documentElement.animate(
-      {
-        clipPath: [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`,
-        ],
-      },
-      {
-        duration: 500,
-        easing: 'ease-out',
-        pseudoElement: '::view-transition-new(root)',
-      }
-    )
-  }, [resolvedTheme, setTheme, playClick])
-
-  const handleSoundToggle = useCallback(() => {
-    setSoundEnabled(!soundEnabled)
-  }, [soundEnabled, setSoundEnabled])
+  const progressX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 })
 
   const handleCopyEmail = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(EMAIL)
       setCopied(true)
-      playSuccess()
       toast.success('Email copied to clipboard!')
       setTimeout(() => setCopied(false), 2000)
     } catch {
       toast.error('Failed to copy email')
     }
-  }, [playSuccess])
+  }, [])
 
   return (
     <>
-      <LoadingScreen />
       <EasterEgg />
+      <TopNav />
+      <StatusBadges />
+      <Stickers />
 
-      <div ref={containerRef} className="w-full max-w-4xl min-h-screen py-20 px-6 relative">
-        {/* Progress Bar */}
-        <motion.div
-          className="fixed top-0 left-0 right-0 h-1 bg-foreground origin-left z-50"
-          style={{ scaleX }}
-        />
+      {/* scroll progress indicator */}
+      <motion.div
+        className="fixed inset-x-0 top-0 z-[60] h-1 origin-left bg-foreground/80"
+        style={{ scaleX: progressX }}
+      />
 
-            <Header
-              mounted={mounted}
-              soundEnabled={soundEnabled}
-              onSoundToggle={handleSoundToggle}
-              onThemeToggle={handleThemeToggle}
-            />
-              {/* Hero Section */}
-        <motion.section
-          className="mb-32 pt-8"
-          initial="initial"
-          animate="animate"
-          variants={staggerContainer}
-          style={{ y: heroY }}
-        >
-          <motion.div
-            className="flex items-center gap-6 mb-6"
-            variants={fadeInUp}
-          >
-<motion.img
-              src="/logo.jpg"
-              alt="Marques"
-              className="w-20 h-20 md:w-28 md:h-28 rounded-2xl object-cover shadow-lg"
-              whileHover={{ scale: 1.05, rotate: 2 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            />
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <p className="text-muted-foreground tracking-widest uppercase text-sm">
-                  Frontend Software Engineer
-                </p>
-                <motion.span
-                  className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-gradient-to-r from-green-500/20 to-green-400/10 text-green-600 dark:text-green-400 text-xs font-medium"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  Open to Work
-                </motion.span>
-              </div>
-              <h1 className="font-serif text-5xl md:text-7xl font-light italic tracking-tight">
-                <CharReveal delay={0.3}>Marques</CharReveal>
-              </h1>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="flex items-center gap-2 text-muted-foreground mb-4"
-            variants={fadeInUp}
-          >
-            <MapPin className="w-4 h-4" />
-            <span>United Kingdom</span>
-            <span className="mx-2">·</span>
-            <Briefcase className="w-4 h-4" />
-            <span>Freelance</span>
-          </motion.div>
-
-          {/* Status Badges */}
-          <motion.div
-            className="flex flex-wrap items-center gap-2 mb-8"
-            variants={fadeInUp}
-          >
-            {/* Discord Status */}
-            <span className="relative h-6">
-              <img
-                src="https://api.statusbadges.me/badge/status/1094094157305356408?style=for-the-badge&labelColor=f5f5f5&color=e5e5e5"
-                alt="Discord Status"
-                className="h-6 rounded border border-black/5 dark:hidden"
-              />
-              <img
-                src="https://api.statusbadges.me/badge/status/1094094157305356408?style=for-the-badge&labelColor=0d0d0d&color=1a1a1a"
-                alt="Discord Status"
-                className="h-6 rounded border border-white/10 hidden dark:block"
-              />
-            </span>
-            {/* IntelliJ */}
-            <span className="relative h-6">
-              <img
-                src="https://api.statusbadges.me/badge/intellij/1094094157305356408?style=for-the-badge&labelColor=f5f5f5&color=e5e5e5"
-                alt="IntelliJ Activity"
-                className="h-6 rounded border border-black/5 dark:hidden"
-              />
-              <img
-                src="https://api.statusbadges.me/badge/intellij/1094094157305356408?style=for-the-badge&labelColor=0d0d0d&color=1a1a1a"
-                alt="IntelliJ Activity"
-                className="h-6 rounded border border-white/10 hidden dark:block"
-              />
-            </span>
-            {/* Spotify */}
-            <span className="relative h-6">
-              <img
-                src="https://api.statusbadges.me/badge/spotify/1094094157305356408?style=for-the-badge&labelColor=f5f5f5&color=e5e5e5"
-                alt="Spotify"
-                className="h-6 rounded border border-black/5 dark:hidden"
-              />
-              <img
-                src="https://api.statusbadges.me/badge/spotify/1094094157305356408?style=for-the-badge&labelColor=0d0d0d&color=1a1a1a"
-                alt="Spotify"
-                className="h-6 rounded border border-white/10 hidden dark:block"
-              />
-            </span>
-          </motion.div>
-
-          <motion.p
-            className="text-lg text-muted-foreground max-w-xl leading-relaxed mb-8"
-            variants={fadeInUp}
-          >
-            Building elegant solutions for complex problems. Passionate about frontend architecture,
-            developer experience, and creating seamless user interfaces. Currently working on{' '}
-            <a href="https://StellarStack.dev" target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-4 hover:opacity-80 transition-opacity">StellarStack</a>.
-          </motion.p>
-
-          {/* Email */}
-          <motion.div
-            className="flex items-center gap-3"
-            variants={fadeInUp}
-          >
-<motion.button
-              onClick={handleCopyEmail}
-              className="flex items-center gap-2 px-4 py-3 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Copy email"
+      <div className="relative w-full">
+        <main className="mx-auto max-w-2xl px-6 pt-32 pb-24">
+          {/* ---------------- Hero ---------------- */}
+          <section id="home" className="scroll-mt-28">
+            <motion.div
+              className="relative mb-6 inline-block"
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="relative w-5 h-5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo.png"
+                alt="Marques Scripps"
+                className="h-14 w-14 rounded-2xl object-cover shadow-md"
+              />
+              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-background bg-green-500" />
+            </motion.div>
+
+            <motion.h1
+              className="text-4xl font-bold tracking-tight text-balance md:text-5xl"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Hey, I&apos;m Marques Scripps
+            </motion.h1>
+
+            <motion.div
+              className="mt-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              <RoleRotator />
+            </motion.div>
+
+            <motion.div className="mt-5 flex items-center gap-2 text-sm text-muted-foreground" {...fadeUp}>
+              <MapPin className="h-4 w-4" />
+              <span>Letchworth, UK</span>
+              <span className="mx-1">·</span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                Open to work
+              </span>
+            </motion.div>
+
+            <motion.p
+              className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg"
+              {...fadeUp}
+            >
+              I build production-grade web apps end to end, and ship open-source products on
+              the side. I care about testing, performance, and great developer experience.
+            </motion.p>
+
+            <motion.div className="mt-8 flex flex-wrap items-center gap-3" {...fadeUp}>
+              <TactileButton
+                variant="light"
+                onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                View <span className="text-muted-foreground">— projects</span>
+              </TactileButton>
+              <TactileButton variant="dark" href={`mailto:${EMAIL}`}>
+                Let&apos;s build something together
+                <ArrowUpRight className="h-4 w-4" />
+              </TactileButton>
+            </motion.div>
+
+            {/* scroll hint */}
+            <motion.div
+              className="mt-16 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1, duration: 0.6 }}
+            >
+              <motion.span animate={{ y: [0, 5, 0] }} transition={{ duration: 1.7, repeat: Infinity, ease: 'easeInOut' }}>
+                <ChevronDown className="h-4 w-4" />
+              </motion.span>
+              Scroll to explore
+            </motion.div>
+          </section>
+
+          {/* ---------------- Work ---------------- */}
+          <Section id="work" index="01" title="Work">
+            <div className="space-y-12">
+              {experience.map((job, i) => (
                 <motion.div
-                  initial={false}
-                  animate={{
-                    scale: copied ? 0 : 1,
-                    opacity: copied ? 0 : 1,
-                    rotate: copied ? -90 : 0
-                  }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                  className="absolute inset-0"
+                  key={i}
+                  variants={staggerParent}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, margin: '-80px' }}
                 >
-                  <Mail className="w-5 h-5" />
+                  <motion.p
+                    variants={staggerItem}
+                    className="mb-1 font-mono text-xs uppercase tracking-widest text-muted-foreground"
+                  >
+                    {job.period}
+                  </motion.p>
+                  <motion.div variants={staggerItem} className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <h3 className="text-lg font-semibold">{job.title}</h3>
+                    <Badge variant="outline" className="rounded-md font-normal">{job.company}</Badge>
+                    <span className="text-sm text-muted-foreground">· {job.type}</span>
+                  </motion.div>
+                  <ul className="mt-3 space-y-1.5">
+                    {job.points.map((p, j) => (
+                      <motion.li
+                        key={j}
+                        variants={staggerItem}
+                        className="flex gap-2.5 text-sm text-muted-foreground"
+                      >
+                        <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-foreground/30" />
+                        <span>{p}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {job.technologies.map((t) => (
+                      <motion.span key={t} variants={staggerItem} className="inline-flex">
+                        <Badge variant="secondary" className="rounded-md font-normal">{t}</Badge>
+                      </motion.span>
+                    ))}
+                  </div>
                 </motion.div>
-                <motion.div
-                  initial={false}
-                  animate={{
-                    scale: copied ? 1 : 0,
-                    opacity: copied ? 1 : 0,
-                    rotate: copied ? 0 : 90
-                  }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                  className="absolute inset-0"
-                >
-                  <Check className="w-5 h-5 text-green-500" />
-                </motion.div>
+              ))}
+            </div>
+          </Section>
+
+          {/* ---------------- Projects ---------------- */}
+          <Section id="projects" index="02" title="Projects">
+            <div className="space-y-16">
+              {projects.map((p, i) => {
+                const flip = i % 2 === 1
+                const tilt = [-4, 3.5, -3][i] ?? 0
+                return (
+                  <motion.div
+                    key={i}
+                    className="group grid gap-8 md:grid-cols-2 md:items-center md:gap-10"
+                    {...fadeUp}
+                    transition={{ ...fadeUp.transition, delay: i * 0.04 }}
+                  >
+                    <a
+                      href={p.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${p.title} on GitHub`}
+                      className={cn('block px-2 py-4 md:px-4', flip && 'md:order-2')}
+                    >
+                      <div
+                        className="rounded-[10px] bg-white p-2 shadow-[0_18px_40px_-16px_rgba(0,0,0,0.45)] transition-transform duration-300 ease-out group-hover:rotate-0 group-hover:-translate-y-1.5 dark:bg-neutral-100"
+                        style={{ rotate: `${tilt}deg` }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={p.image}
+                          alt={`${p.title} screenshot`}
+                          loading="lazy"
+                          className="aspect-[16/10] w-full rounded-[4px] object-cover object-top"
+                        />
+                      </div>
+                    </a>
+
+                    <div className={cn(flip && 'md:order-1')}>
+                      <div className="flex items-center gap-2">
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ background: p.accent }} />
+                        <h3 className="text-xl font-bold tracking-tight">{p.title}</h3>
+                      </div>
+                      <p className="mt-1 text-sm text-muted-foreground">{p.description}</p>
+                      <ul className="mt-3 space-y-1.5">
+                        {p.points.map((pt, j) => (
+                          <li key={j} className="flex gap-2.5 text-sm text-muted-foreground">
+                            <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-foreground/30" />
+                            <span>{pt}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {p.technologies.map((t) => (
+                          <Badge key={t} variant="secondary" className="rounded-md font-normal">{t}</Badge>
+                        ))}
+                      </div>
+                      <a
+                        href={p.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-foreground underline-offset-4 hover:underline"
+                      >
+                        <Github className="h-4 w-4" />
+                        View on GitHub
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
+          </Section>
+
+          {/* ---------------- Education ---------------- */}
+          <Section id="education" index="03" title="Education">
+            <motion.div className="flex items-start gap-4" {...fadeUp}>
+              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-border bg-card">
+                <GraduationCap className="h-6 w-6" />
               </div>
-              <span className="text-sm">{EMAIL}</span>
-              <Copy className="w-4 h-4 text-muted-foreground" />
-            </motion.button>
+              <div>
+                <h3 className="text-lg font-semibold">University of Suffolk</h3>
+                <p className="text-sm text-muted-foreground">BSc Computer Games Technology</p>
+                <div className="mt-1 flex items-center gap-3 text-sm text-muted-foreground">
+                  <span>Sept 2021</span>
+                  <span className="text-muted-foreground/50">·</span>
+                  <span>2:2 Honours</span>
+                </div>
+              </div>
+            </motion.div>
+          </Section>
+
+          {/* ---------------- Contact ---------------- */}
+          <Section id="contact" index="04" title="Get in touch">
+            <motion.p className="max-w-xl text-base text-muted-foreground" {...fadeUp}>
+              I&apos;m always open to discussing new opportunities, interesting projects, or just
+              having a chat about tech. The fastest way to reach me is email.
+            </motion.p>
+
+            <motion.div className="mt-6 flex flex-wrap items-center gap-3" {...fadeUp}>
+              <button
+                onClick={handleCopyEmail}
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm transition-colors hover:bg-accent"
+                aria-label="Copy email"
+              >
+                {copied ? <Check className="h-4 w-4 text-green-500" /> : <Mail className="h-4 w-4" />}
+                {EMAIL}
+                <Copy className="h-4 w-4 text-muted-foreground" />
+              </button>
+              <TactileButton variant="dark" href={`mailto:${EMAIL}`}>
+                <Mail className="h-4 w-4" />
+                Say hello
+              </TactileButton>
+              <TactileButton variant="light" href="/cv.pdf" download>
+                <Download className="h-4 w-4" />
+                Download CV
+              </TactileButton>
+            </motion.div>
+
             <motion.a
               href="https://www.cal.eu/marquescoding/15min"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-3 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="mt-4 inline-flex items-center gap-2 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              {...fadeUp}
             >
-              <Calendar className="w-5 h-5" />
-              <span className="text-sm">Schedule a meeting</span>
+              <Calendar className="h-4 w-4" />
+              Or schedule a 15-minute meeting
             </motion.a>
-          </motion.div>
-        </motion.section>
 
-        {/* Experience Section */}
-        <motion.section
-          className="mb-32"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          style={{ y: experienceY }}
-        >
-          <motion.h2
-            className="font-serif text-4xl md:text-5xl font-light italic mb-16"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Experience
-          </motion.h2>
-
-          <div className="space-y-16">
-            {experience.map((job, index) => (
-              <motion.div
-                key={index}
-                className="group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <div className="flex flex-col md:flex-row md:items-baseline md:justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-medium">{job.title}</h3>
-                    <p className="text-muted-foreground">
-                      {job.company} <span className="text-sm">· {job.type}</span>
-                    </p>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1 md:mt-0">{job.period}</p>
-                </div>
-
-                <ul className="space-y-2 mb-4 text-muted-foreground">
-                  {job.points.map((point, i) => (
-                    <motion.li
-                      key={i}
-                      className="flex gap-3"
-                      initial={{ opacity: 0, x: -10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: 0.2 + i * 0.05 }}
-                    >
-                      <span className="text-muted-foreground/50 mt-1.5">—</span>
-                      <span>{point}</span>
-                    </motion.li>
-                  ))}
-                </ul>
-
-                <div className="flex flex-wrap gap-2">
-                  {job.technologies.map((tech) => (
-                    <Badge key={tech} variant="secondary" className="font-normal">
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* Projects Section */}
-        <motion.section
-          className="mb-32"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          style={{ y: projectsY }}
-        >
-          <motion.h2
-            className="font-serif text-4xl md:text-5xl font-light italic mb-16"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Projects
-          </motion.h2>
-
-          <div className="space-y-12">
-            {projects.map((project, index) => (
-<motion.a
-                key={index}
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                onClick={playClick}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-xl font-medium group-hover:underline underline-offset-4 transition-all">
-                        {project.title}
-                      </h3>
-                      <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                    <p className="text-muted-foreground">{project.description}</p>
-                  </div>
-                  <project.icon className="w-5 h-5 text-muted-foreground" />
-                </div>
-
-                <ul className="space-y-2 mb-4 text-muted-foreground">
-                  {project.points.map((point, i) => (
-                    <li key={i} className="flex gap-3">
-                      <span className="text-muted-foreground/50 mt-1.5">—</span>
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.map((tech) => (
-                    <Badge key={tech} variant="secondary" className="font-normal">
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              </motion.a>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* Skills Section */}
-        <motion.section
-          className="mb-32"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          style={{ y: skillsY }}
-        >
-          <motion.h2
-            className="font-serif text-4xl md:text-5xl font-light italic mb-16"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Skills
-          </motion.h2>
-
-          <div className="grid md:grid-cols-2 gap-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <h3 className="text-sm uppercase tracking-widest text-muted-foreground mb-4">Languages</h3>
-              <div className="flex flex-wrap gap-2">
-                {skills.languages.map((skill, index) => (
-<motion.div
-                    key={skill}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
-                  >
-                    <Badge variant="outline" className="text-base px-4 py-2 font-normal cursor-default">
-                      {skill}
-                    </Badge>
-                  </motion.div>
-                ))}
-              </div>
+            <motion.div className="mt-8 flex items-center gap-2" {...fadeUp}>
+              {[
+                { href: 'https://github.com/marquescoding', label: 'GitHub', icon: Github },
+                { href: 'https://linkedin.com/in/marques-scripps-476103141', label: 'LinkedIn', icon: Linkedin },
+                { href: 'https://mscripps.uk', label: 'Website', icon: Globe },
+              ].map(({ href, label, icon: Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                >
+                  <Icon className="h-[18px] w-[18px]" />
+                </a>
+              ))}
             </motion.div>
+          </Section>
+        </main>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <h3 className="text-sm uppercase tracking-widest text-muted-foreground mb-4">Technologies</h3>
-              <div className="flex flex-wrap gap-2">
-                {skills.technologies.map((skill, index) => (
-<motion.div
-                    key={skill}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
-                  >
-                    <Badge variant="outline" className="text-base px-4 py-2 font-normal cursor-default">
-                      {skill}
-                    </Badge>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+        {/* ---------------- Footer ---------------- */}
+        <footer className="relative mt-24 overflow-hidden border-t border-border">
+          <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-start justify-between gap-2 px-6 pt-8 text-sm text-muted-foreground md:flex-row md:items-center">
+            <p>Marques Scripps © {new Date().getFullYear()}</p>
+            <p>Built with Next.js, Tailwind &amp; Motion</p>
           </div>
-        </motion.section>
-
-        {/* Education Section */}
-        <motion.section
-          className="mb-32"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.h2
-            className="font-serif text-4xl md:text-5xl font-light italic mb-16"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Education
-          </motion.h2>
-
-          <motion.div
-            className="flex items-start gap-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="p-3 rounded-xl bg-gradient-to-br from-secondary to-secondary/60">
-              <GraduationCap className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-xl font-medium">University of Suffolk</h3>
-              <p className="text-muted-foreground">Bachelor of Science in Computer Games Technology</p>
-              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                <span>Sept 2021</span>
-                <span className="text-muted-foreground/50">·</span>
-                <span>2:2 Achieved</span>
-              </div>
-            </div>
-          </motion.div>
-        </motion.section>
-
-        {/* Contact Section */}
-        <motion.section
-          className="mb-20"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.h2
-            className="font-serif text-4xl md:text-5xl font-light italic mb-16"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Get in touch
-          </motion.h2>
-
-          <motion.div
-            className="space-y-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <p className="text-lg text-muted-foreground max-w-xl">
-              I'm always open to discussing new opportunities, interesting projects, or just having a chat about tech.
-            </p>
-
-<motion.a
-              href={`mailto:${EMAIL}`}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-foreground to-foreground/90 text-background font-medium hover:opacity-90 transition-opacity"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={playClick}
-            >
-              <Mail className="w-5 h-5" />
-              Say hello
-            </motion.a>
-          </motion.div>
-        </motion.section>
-
-              {/* Footer */}
-              <motion.footer
-                className="pt-12 border-t border-border"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                  <p className="text-sm text-muted-foreground">
-                    Marques Scripps © {new Date().getFullYear()}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Built with Next.js, TailwindCSS & Motion
-                  </p>
-                </div>
-              </motion.footer>
+          <div aria-hidden className="flex justify-center overflow-hidden">
+            <span className="translate-y-[14%] select-none text-[23vw] font-bold leading-[0.78] tracking-tighter text-foreground/[0.05]">
+              Marques
+            </span>
+          </div>
+        </footer>
       </div>
     </>
   )

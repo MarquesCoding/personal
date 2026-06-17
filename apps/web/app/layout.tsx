@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google"
+import { DM_Sans, Geist_Mono } from "next/font/google"
 import { Metadata } from "next"
 
 import "@workspace/ui/globals.css"
@@ -6,7 +6,7 @@ import { Providers } from "@/components/providers"
 import { CursorProvider, Cursor } from "@workspace/ui/components/animate-ui/components/animate/cursor"
 import { Toaster } from "@workspace/ui/components/sonner"
 
-const fontSans = Geist({
+const fontSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
 })
