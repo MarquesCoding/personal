@@ -219,9 +219,12 @@
   --sticker-start: calc(-1 * var(--sticker-p));
   --sticker-end: calc(100% + var(--sticker-p));
   --peel-direction: 0deg;
-  position: fixed;
+  position: absolute;
+  pointer-events: auto;
   cursor: grab;
   touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .sticker-peel:active { cursor: grabbing; }
 
@@ -243,11 +246,13 @@
     var(--sticker-start) var(--sticker-end)
   );
   transition: clip-path 0.45s ease-out;
+  /* subtle resting drop shadow */
+  filter: url(#sticker-shadow);
 }
 
-/* drop shadow only while the sticker is being dragged */
+/* larger drop shadow while dragging */
 .sticker-peel.is-dragging .sticker-main {
-  filter: url(#sticker-shadow);
+  filter: url(#sticker-shadow-lg);
 }
 .sticker-main > * { transform: rotate(calc(-1 * var(--peel-direction))); }
 

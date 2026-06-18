@@ -120,7 +120,7 @@ function Sticker({ def, x, y }: { def: Placed; x: number; y: number }) {
       dragElastic={0}
       onDragStart={() => setDragging(true)}
       onDragEnd={() => setDragging(false)}
-      className={`sticker-peel pointer-events-auto${dragging ? ' is-dragging' : ''}`}
+      className={`sticker-peel pointer-events-auto ${dragging ? 'is-dragging' : ''}`}
       style={style}
       whileDrag={{ scale: 1.1, zIndex: 60 }}
     >
@@ -187,8 +187,11 @@ export function Stickers() {
             <feFlood floodColor="rgb(214,214,214)" result="flood" />
             <feComposite in="flood" in2="spread" operator="in" />
           </filter>
-          <filter id="sticker-shadow" x="-40%" y="-40%" width="180%" height="180%">
-            <feDropShadow dx="1" dy="2" stdDeviation="1.5" floodColor="black" floodOpacity="0.35" />
+          <filter id="sticker-shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" floodColor="black" floodOpacity="0.28" />
+          </filter>
+          <filter id="sticker-shadow-lg" x="-70%" y="-70%" width="240%" height="240%">
+            <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor="black" floodOpacity="0.4" />
           </filter>
         </defs>
       </svg>

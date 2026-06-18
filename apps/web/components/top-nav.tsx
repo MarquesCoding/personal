@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { Moon, Sun } from 'lucide-react'
+import { IconMoonOutlineDuo18 as Moon, IconSunOutlineDuo18 as Sun } from 'nucleo-ui-outline-duo-18'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 import { cn } from '@workspace/ui/lib/utils'

@@ -24,26 +24,29 @@ export function RoleRotator() {
   const letters = role.split('')
 
   return (
-    <span
-      className="relative block h-[1.15em] overflow-hidden whitespace-nowrap text-3xl font-bold tracking-tight text-foreground/65 sm:text-4xl md:text-5xl"
-      aria-label={role}
-    >
-      <AnimatePresence mode="wait">
-        <motion.span key={role} className="inline-flex" aria-hidden>
-          {letters.map((ch, i) => (
-            <motion.span
-              key={`${role}-${i}`}
-              className="inline-block whitespace-pre"
-              initial={{ y: '110%' }}
-              animate={{ y: '0%' }}
-              exit={{ y: '-110%' }}
-              transition={{ duration: 0.42, delay: i * 0.028, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {ch === ' ' ? ' ' : ch}
-            </motion.span>
-          ))}
-        </motion.span>
-      </AnimatePresence>
+    <span className="relative inline-block whitespace-nowrap align-baseline" aria-label={role}>
+      {/* invisible sizer — sets the width AND a real text baseline so it aligns inline */}
+      <span aria-hidden className="invisible">{role}</span>
+
+      {/* animated swipe-up overlay (absolute so it never affects layout/baseline) */}
+      <span aria-hidden className="absolute inset-0 overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.span key={role} className="inline-block whitespace-nowrap">
+            {letters.map((ch, i) => (
+              <motion.span
+                key={`${role}-${i}`}
+                className="inline-block whitespace-pre"
+                initial={{ y: '115%' }}
+                animate={{ y: '0%' }}
+                exit={{ y: '-115%' }}
+                transition={{ duration: 0.42, delay: i * 0.028, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {ch === ' ' ? ' ' : ch}
+              </motion.span>
+            ))}
+          </motion.span>
+        </AnimatePresence>
+      </span>
     </span>
   )
 }

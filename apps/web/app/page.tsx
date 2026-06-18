@@ -1,10 +1,21 @@
 'use client'
 
 import { motion, useScroll, useSpring } from 'framer-motion'
+import { Github, Linkedin } from 'lucide-react'
 import {
-  Github, Linkedin, Globe, ExternalLink, MapPin, GraduationCap, Mail, Copy, Check,
-  ArrowUpRight, Download, Calendar, ChevronRight, ChevronDown,
-} from 'lucide-react'
+  IconGlobeOutlineDuo18 as Globe,
+  IconExternalLinkOutlineDuo18 as ExternalLink,
+  IconMapPinOutlineDuo18 as MapPin,
+  IconGraduationCapOutlineDuo18 as GraduationCap,
+  IconEnvelopeOutlineDuo18 as Mail,
+  IconCopyOutlineDuo18 as Copy,
+  IconCheckOutlineDuo18 as Check,
+  IconArrowUpRightOutlineDuo18 as ArrowUpRight,
+  IconDownloadOutlineDuo18 as Download,
+  IconCalendarOutlineDuo18 as Calendar,
+  IconChevronRightOutlineDuo18 as ChevronRight,
+  IconChevronDownOutlineDuo18 as ChevronDown,
+} from 'nucleo-ui-outline-duo-18'
 import { Badge } from '@workspace/ui/components/badge'
 import { cn } from '@workspace/ui/lib/utils'
 import { useState, useCallback } from 'react'
@@ -185,15 +196,16 @@ export default function Page() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
-              Hey, I&apos;m Marques Scripps
+              Marques Scripps.
             </motion.h1>
 
             <motion.div
-              className="mt-2"
+              className="mt-2 flex flex-wrap items-baseline gap-x-[0.3em] text-xl font-semibold text-foreground/70 sm:text-2xl md:text-3xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
+              <span>I&apos;m a</span>
               <RoleRotator />
             </motion.div>
 
