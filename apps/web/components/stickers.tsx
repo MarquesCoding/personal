@@ -104,6 +104,9 @@ function pixelY(p: Placed, vh: number): number {
 function Sticker({ def, x, y }: { def: Placed; x: number; y: number }) {
   const { resolvedTheme } = useTheme()
   const [dragging, setDragging] = useState(false)
+
+  // safety: never leave the page-scroll lock on if a sticker unmounts mid-drag
+  useEffect(() => () => document.documentElement.classList.remove('sticker-dragging'), [])
   const url = `https://cdn.simpleicons.org/${def.slug}/${resolvedTheme === 'dark' ? def.dark : def.light}`
   const style = {
     top: y,
@@ -118,8 +121,14 @@ function Sticker({ def, x, y }: { def: Placed; x: number; y: number }) {
       drag
       dragMomentum={false}
       dragElastic={0}
-      onDragStart={() => setDragging(true)}
-      onDragEnd={() => setDragging(false)}
+      onDragStart={() => {
+        setDragging(true)
+        document.documentElement.classList.add('sticker-dragging')
+      }}
+      onDragEnd={() => {
+        setDragging(false)
+        document.documentElement.classList.remove('sticker-dragging')
+      }}
       className={`sticker-peel pointer-events-auto ${dragging ? 'is-dragging' : ''}`}
       style={style}
       whileDrag={{ scale: 1.1, zIndex: 60 }}

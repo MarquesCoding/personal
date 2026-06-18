@@ -124,10 +124,20 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    /* reserve the scrollbar gutter so locking scroll during a drag doesn't shift layout */
+    scrollbar-gutter: stable;
+  }
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   }
+}
+
+/* lock page scroll while a sticker is being dragged (prevents the drag desyncing) */
+html.sticker-dragging,
+html.sticker-dragging body {
+  overflow: hidden;
 }
 
 .font-just-another-hand {
