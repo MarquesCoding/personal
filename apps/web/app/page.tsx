@@ -26,6 +26,7 @@ import { TopNav } from '@/components/top-nav'
 import { RoleRotator } from '@/components/role-rotator'
 import { Stickers } from '@/components/stickers'
 import { StatusBadges } from '@/components/status-badges'
+import { ContributionGraph } from '@/components/contribution-graph'
 
 const fadeUp = {
   initial: { opacity: 0, y: 22 },
@@ -49,7 +50,7 @@ const experience = [
     title: 'Full Stack Software Engineer (E2)',
     company: 'Ocado Technology',
     type: 'Hybrid',
-    period: 'Oct 2023 — Present',
+    period: 'Oct 2023 — Feb 2026',
     points: [
       'Contribute to full-stack development of a customer-facing web application for the retail industry, working within a team of 48.',
       'Improved front-end accessibility through training-led practices, including responsive layouts and RTL support.',
@@ -86,6 +87,18 @@ const experience = [
 ]
 
 const projects = [
+  {
+    title: 'Valence',
+    accent: '#14b8a6',
+    description: 'Self-hosted streaming platform for your own media library',
+    link: 'https://github.com/ValenceOSS/Valence',
+    image: '/valence.jpg',
+    points: [
+      'Streams films, TV, anime, music, audiobooks and books to apps for web, desktop, iPhone and Apple TV, with built-in media requesting.',
+      'Extensible through a plugin system and themes, runs on Postgres, MySQL or MariaDB, and transcodes through a Rust service driving FFmpeg.',
+    ],
+    technologies: ['TypeScript', 'React', 'Hono', 'Drizzle', 'Rust', 'FFmpeg', 'React Native', 'Expo', 'Electron'],
+  },
   {
     title: 'PolarHQ',
     accent: '#3b82f6',
@@ -227,6 +240,10 @@ export default function Page() {
               the side. I care about testing, performance, and great developer experience.
             </motion.p>
 
+            <motion.div className="mt-8 max-w-xl" {...fadeUp}>
+              <ContributionGraph />
+            </motion.div>
+
             <motion.div className="mt-8 flex flex-wrap items-center gap-3" {...fadeUp}>
               <TactileButton
                 variant="light"
@@ -305,7 +322,7 @@ export default function Page() {
             <div className="space-y-16">
               {projects.map((p, i) => {
                 const flip = i % 2 === 1
-                const tilt = [-4, 3.5, -3][i] ?? 0
+                const tilt = [-4, 3.5, -3, 4][i] ?? 0
                 return (
                   <motion.div
                     key={i}
