@@ -49,7 +49,7 @@ const experience = [
     title: 'Full Stack Software Engineer (E2)',
     company: 'Ocado Technology',
     type: 'Hybrid',
-    period: 'Oct 2023 — Present',
+    period: 'Oct 2023 — Feb 2026',
     points: [
       'Contribute to full-stack development of a customer-facing web application for the retail industry, working within a team of 48.',
       'Improved front-end accessibility through training-led practices, including responsive layouts and RTL support.',
