@@ -1,0 +1,38 @@
+name: Contributions
+
+# Counts a year of commits through GitHub's commit search once a day and commits the result, which the
+# site's activity graph is drawn from. Search finds commits the profile graph leaves out.
+
+on:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - run: node apps/web/scripts/fetch-contributions.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit if the counts changed
+        run: |
+          if git diff --quiet -- apps/web/data/contributions.json; then
+            echo "No change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/data/contributions.json
+          git commit -m "chore: refresh the contributions graph"
+          git push
