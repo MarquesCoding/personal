@@ -240,6 +240,10 @@ export default function Page() {
               the side. I care about testing, performance, and great developer experience.
             </motion.p>
 
+            <motion.div className="mt-8 max-w-xl" {...fadeUp}>
+              <ContributionGraph />
+            </motion.div>
+
             <motion.div className="mt-8 flex flex-wrap items-center gap-3" {...fadeUp}>
               <TactileButton
                 variant="light"
@@ -267,15 +271,8 @@ export default function Page() {
             </motion.div>
           </section>
 
-          {/* ---------------- Activity ---------------- */}
-          <Section id="activity" index="01" title="Activity">
-            <motion.div {...fadeUp}>
-              <ContributionGraph />
-            </motion.div>
-          </Section>
-
           {/* ---------------- Work ---------------- */}
-          <Section id="work" index="02" title="Work">
+          <Section id="work" index="01" title="Work">
             <div className="space-y-12">
               {experience.map((job, i) => (
                 <motion.div
@@ -321,7 +318,7 @@ export default function Page() {
           </Section>
 
           {/* ---------------- Projects ---------------- */}
-          <Section id="projects" index="03" title="Projects">
+          <Section id="projects" index="02" title="Projects">
             <div className="space-y-16">
               {projects.map((p, i) => {
                 const flip = i % 2 === 1
@@ -391,7 +388,7 @@ export default function Page() {
           </Section>
 
           {/* ---------------- Education ---------------- */}
-          <Section id="education" index="04" title="Education">
+          <Section id="education" index="03" title="Education">
             <motion.div className="flex items-start gap-4" {...fadeUp}>
               <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-border bg-card">
                 <GraduationCap className="h-6 w-6" />
@@ -409,7 +406,7 @@ export default function Page() {
           </Section>
 
           {/* ---------------- Contact ---------------- */}
-          <Section id="contact" index="05" title="Get in touch">
+          <Section id="contact" index="04" title="Get in touch">
             <motion.p className="max-w-xl text-base text-muted-foreground" {...fadeUp}>
               I&apos;m always open to discussing new opportunities, interesting projects, or just
               having a chat about tech. The fastest way to reach me is email.
